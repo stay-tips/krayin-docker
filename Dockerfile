@@ -20,8 +20,14 @@ RUN apt-get update && apt-get install -y \
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp
 RUN docker-php-ext-configure intl
 
+# download mailparse source
+RUN curl -L -o /tmp/mailparse.tar.gz https://pecl.php.net/get/mailparse && \
+    mkdir -p /usr/src/php/ext/mailparse && \
+    tar -xf /tmp/mailparse.tar.gz -C /usr/src/php/ext/mailparse --strip-components=1 && \
+    rm /tmp/mailparse.tar.gz
+
 # installing php extension
-RUN docker-php-ext-install bcmath calendar exif gd gmp intl mysqli pdo pdo_mysql zip
+RUN docker-php-ext-install bcmath calendar exif gd gmp intl mailparse mysqli pdo pdo_mysql zip
 
 # installing composer
 COPY --from=composer:2.7 /usr/bin/composer /usr/local/bin/composer
