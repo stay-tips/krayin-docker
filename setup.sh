@@ -37,6 +37,12 @@ docker exec -i ${apache_container_id} bash -c "cd krayin && git reset --hard v2.
 # installing composer dependencies inside container
 docker exec -i ${apache_container_id} bash -c "cd krayin && composer install"
 
+# setting permissions for Laravel
+echo "Setting permissions for storage and bootstrap/cache..."
+docker exec -i ${apache_container_id} bash -c "cd krayin && mkdir -p storage/logs storage/framework/{cache,sessions,views} bootstrap/cache"
+docker exec -i ${apache_container_id} bash -c "cd krayin && chown -R www-data:www-data storage bootstrap/cache"
+docker exec -i ${apache_container_id} bash -c "cd krayin && chmod -R 775 storage bootstrap/cache"
+
 # moving `.env` file
 docker cp .configs/.env ${apache_container_id}:/var/www/html/krayin/.env
 docker cp .configs/.env.testing ${apache_container_id}:/var/www/html/krayin/.env.testing
